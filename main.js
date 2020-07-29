@@ -15,10 +15,10 @@ for (const file of commandFiles) {
 
 client.once("ready", () => {
   console.log("Ready!");
-  client.user
+  /*client.user
     .setAvatar("./images/logo.png")
     .then((user) => console.log(`New avatar set!`))
-    .catch(console.error);
+    .catch(console.error);*/
 });
 
 // Create an event listener for new guild members
@@ -34,19 +34,20 @@ client.on("guildMemberAdd", (member) => {
 });
 
 client.on("message", (message) => {
-  console.log(
+  /*console.log(
     `Message string:${message.toString()}\nSent by:${message.author}`
-  );
-
+  );*/
+  /* console.log(message.channel);
+  console.log(message.content);*/
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   const args = message.content.slice(prefix.length).split(/ +/);
   const command = args.shift().toLowerCase();
 
-  if (message.channel.type === "dm" || message.channel.name !== "testing") {
+  /*if (message.channel.type === "dm" || message.channel.name !== "testing") {
     message.reply("Hello there");
     return;
-  }
+  }*/
 
   if (!client.commands.has(command)) return;
 
