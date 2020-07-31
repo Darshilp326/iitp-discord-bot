@@ -1,13 +1,18 @@
 const Discord = require("discord.js");
+const { GoogleSpreadsheet } = require("google-spreadsheet");
+const { google } = require("googleapis");
+const sheets = google.sheets("v4");
 const {
   getAuthToken,
   getSpreadSheetValues,
 } = require("../services/googleSheetsService.js");
 const spreadsheetId = "1tLG5wq2MRHDmBVe1FJyTTVO8ABUWy67emr-45--dzbk";
-const sheetName = "allStudents";
+const sheetName = "Sheet1";
+
 async function Listen(message) {
   var author_detail = null;
   var roll;
+
   try {
     const auth = await getAuthToken();
     const details = await getSpreadSheetValues({
@@ -21,7 +26,6 @@ async function Listen(message) {
   }
   message.channel.send("i am listening");
   let filter = (m) => {
-    //console.log(/^\d{4}[a-z]{2,3}\d{2}$/i.test(m.content));
     var res = m.content.split(" ");
     let i = 0;
     while (res[i] !== undefined) {
@@ -33,9 +37,8 @@ async function Listen(message) {
     }
     return false;
   };
-  //let filter = (m) => !m.author.bot;
   let collector = new Discord.MessageCollector(message.channel, filter);
-  collector.on("collect", (message, col) => {
+  collector.on("collect", async (message, col) => {
     console.log(`Collected roll ${roll}`);
     roll = roll.toUpperCase();
     let flag = 0;
@@ -43,13 +46,24 @@ async function Listen(message) {
       if (roll === author_detail[i][2]) {
         console.log(author_detail[i][1]);
         console.log(author_detail[i][0]);
-        //author_detail[i][0] = message.author.username;
+        author_detail[i][0] = message.author.username;
         flag = 1;
         message.channel.send(
           `Discord username added to spreadsheet for ${author_detail[i][2]}`
         );
         break;
       }
+    }
+    console.log(author_detail);
+    if (flag === 1) {
+      const auth = await getAuthToken();
+      const res = await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: sheetName,
+        valueInputOption: "USER_ENTERED",
+        resource: { values: author_detail },
+        auth,
+      });
     }
     if (flag !== 1) {
       message.channel.send(

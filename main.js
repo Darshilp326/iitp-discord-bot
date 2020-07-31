@@ -16,7 +16,7 @@ for (const file of commandFiles) {
 client.once("ready", () => {
   console.log("Ready!");
   /*client.user
-    .setAvatar("./images/logo.png")
+    .setAvatar("./images/download.jpg")
     .then((user) => console.log(`New avatar set!`))
     .catch(console.error);*/
 });
